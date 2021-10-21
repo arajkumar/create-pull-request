@@ -275,6 +275,7 @@ function createPullRequest(inputs) {
             const repoPath = utils.getRepoPath(inputs.path);
             // Create a git command manager
             const git = yield git_command_manager_1.GitCommandManager.create(repoPath);
+            const pushToForkToken = inputs.pushToForkToken || inputs.token;
             // Save and unset the extraheader auth config if it exists
             core.startGroup('Save persisted git credentials');
             gitAuthHelper = new git_auth_helper_1.GitAuthHelper(git);
@@ -306,7 +307,7 @@ function createPullRequest(inputs) {
             // Configure auth
             if (baseRemote.protocol == 'HTTPS') {
                 core.startGroup('Configuring credential for HTTPS authentication');
-                yield gitAuthHelper.configureToken(inputs.token);
+                yield gitAuthHelper.configureToken(pushToForkToken);
                 core.endGroup();
             }
             core.startGroup('Checking the base repository state');
@@ -1079,6 +1080,7 @@ function run() {
                 branchSuffix: core.getInput('branch-suffix'),
                 base: core.getInput('base'),
                 pushToFork: core.getInput('push-to-fork'),
+                pushToForkToken: core.getInput('push-to-fork-token'),
                 title: core.getInput('title'),
                 body: core.getInput('body'),
                 labels: utils.getInputAsArray('labels'),

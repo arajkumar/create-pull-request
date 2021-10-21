@@ -17,6 +17,7 @@ async function run(): Promise<void> {
       branchSuffix: core.getInput('branch-suffix'),
       base: core.getInput('base'),
       pushToFork: core.getInput('push-to-fork'),
+      pushToForkToken: core.getInput('push-to-fork-token'),
       title: core.getInput('title'),
       body: core.getInput('body'),
       labels: utils.getInputAsArray('labels'),

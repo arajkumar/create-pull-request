@@ -21,6 +21,7 @@ export interface Inputs {
   branchSuffix: string
   base: string
   pushToFork: string
+  pushToForkToken: string
   title: string
   body: string
   labels: string[]
@@ -38,6 +39,8 @@ export async function createPullRequest(inputs: Inputs): Promise<void> {
     const repoPath = utils.getRepoPath(inputs.path)
     // Create a git command manager
     const git = await GitCommandManager.create(repoPath)
+
+    const pushToForkToken = inputs.pushToForkToken || inputs.token
 
     // Save and unset the extraheader auth config if it exists
     core.startGroup('Save persisted git credentials')
@@ -82,7 +85,7 @@ export async function createPullRequest(inputs: Inputs): Promise<void> {
     // Configure auth
     if (baseRemote.protocol == 'HTTPS') {
       core.startGroup('Configuring credential for HTTPS authentication')
-      await gitAuthHelper.configureToken(inputs.token)
+      await gitAuthHelper.configureToken(pushToForkToken)
       core.endGroup()
     }
 

@@ -41,11 +41,11 @@ export class GitHubHelper {
     baseRepository: string,
     headBranch: string
   ): Promise<Pull> {
-    core.info(`Received inputs for pull request: ${JSON.stringify(inputs)}`);
-    core.info(`Base repository: ${baseRepository}, Head branch: ${headBranch}`);
     // Try to create the pull request
     try {
-      core.info(`Attempting creation of pull request`)
+      core.info(`Received inputs for pull request: ${JSON.stringify(inputs)}`);
+      core.info(`Base repository: ${baseRepository}, Head branch: ${headBranch}`);
+      core.info(`Test Attempting creation of pull request`)
       const {data: pull} = await this.octokit.rest.pulls.create({
         ...this.parseRepository(baseRepository),
         title: inputs.title,

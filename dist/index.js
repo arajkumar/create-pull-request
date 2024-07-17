@@ -934,7 +934,9 @@ class GitHubHelper {
         return __awaiter(this, void 0, void 0, function* () {
             // Try to create the pull request
             try {
-                core.info(`Attempting creation of pull request`);
+                core.info(`Received inputs for pull request: ${JSON.stringify(inputs)}`);
+                core.info(`Base repository: ${baseRepository}, Head branch: ${headBranch}`);
+                core.info(`Test Attempting creation of pull request`);
                 const { data: pull } = yield this.octokit.rest.pulls.create(Object.assign(Object.assign({}, this.parseRepository(baseRepository)), { title: inputs.title, head: headBranch, base: inputs.base, body: inputs.body, draft: inputs.draft, maintainer_can_modify: false }));
                 core.info(`Created pull request #${pull.number} (${headBranch} => ${inputs.base})`);
                 return {
@@ -949,6 +951,9 @@ class GitHubHelper {
                     core.info(`A pull request already exists for ${headBranch}`);
                 }
                 else {
+                    core.error(`Enhanced error details: ${JSON.stringify({
+                        message: e.message,
+                    })}`);
                     throw e;
                 }
             }

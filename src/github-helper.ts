@@ -41,6 +41,8 @@ export class GitHubHelper {
     baseRepository: string,
     headBranch: string
   ): Promise<Pull> {
+    core.info(`Received inputs for pull request: ${JSON.stringify(inputs)}`);
+    core.info(`Base repository: ${baseRepository}, Head branch: ${headBranch}`);
     // Try to create the pull request
     try {
       core.info(`Attempting creation of pull request`)
@@ -67,6 +69,9 @@ export class GitHubHelper {
       ) {
         core.info(`A pull request already exists for ${headBranch}`)
       } else {
+        core.error(`Enhanced error details: ${JSON.stringify({
+          message: e.message,
+        })}`);
         throw e
       }
     }

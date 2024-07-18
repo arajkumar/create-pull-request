@@ -39,15 +39,23 @@ export class GitHubHelper {
   private async createOrUpdate(
     inputs: Inputs,
     baseRepository: string,
-    headBranch: string
+    headRepository: string
   ): Promise<Pull> {
+    const [headOwner] = headRepository.split('/')
+    const headBranch = `${headOwner}:${inputs.branch}`
+    const headBranchFull = `${headRepository}:${inputs.branch}`
     // Try to create the pull request
     try {
-      core.info(`Attempting creation of pull request`)
+      core.info(`Received inputs for pull request: ${JSON.stringify(inputs)}`)
+      core.info(
+        `Base repository: ${baseRepository}, Head branch: ${headBranch}`
+      )
+      core.info(`Head branch full: ${headBranchFull}`)
+      core.info(`Test Attempting creation of pull request`)
       const {data: pull} = await this.octokit.rest.pulls.create({
         ...this.parseRepository(baseRepository),
         title: inputs.title,
-        head: headBranch,
+        head: headBranchFull,
         base: inputs.base,
         body: inputs.body,
         draft: inputs.draft,
@@ -68,6 +76,9 @@ export class GitHubHelper {
       ) {
         core.info(`A pull request already exists for ${headBranch}`)
       } else {
+          core.error(`Enhanced error details: ${JSON.stringify({
+          message: e.message,
+        })}`);
         throw e
       }
     }
@@ -115,11 +126,11 @@ export class GitHubHelper {
     baseRepository: string,
     headRepository: string
   ): Promise<Pull> {
-    const [headOwner] = headRepository.split('/')
-    const headBranch = `${headOwner}:${inputs.branch}`
-
-    // Create or update the pull request
-    const pull = await this.createOrUpdate(inputs, baseRepository, headBranch)
+    const pull = await this.createOrUpdate(
+      inputs,
+      baseRepository,
+      headRepository
+    )
 
     // Apply milestone
     if (inputs.milestone) {

@@ -39,8 +39,11 @@ export class GitHubHelper {
   private async createOrUpdate(
     inputs: Inputs,
     baseRepository: string,
-    headBranch: string
+    headRepository: string
   ): Promise<Pull> {
+    const [headOwner] = headRepository.split('/')
+    const headBranch = `${headOwner}:${inputs.branch}`
+    const headBranchFull = `${headRepository}:${inputs.branch}`
     // Try to create the pull request
     try {
       core.info(`Received inputs for pull request: ${JSON.stringify(inputs)}`);
@@ -49,7 +52,7 @@ export class GitHubHelper {
       const {data: pull} = await this.octokit.rest.pulls.create({
         ...this.parseRepository(baseRepository),
         title: inputs.title,
-        head: headBranch,
+        head: headBranchFull,
         base: inputs.base,
         body: inputs.body,
         draft: inputs.draft,
@@ -120,11 +123,11 @@ export class GitHubHelper {
     baseRepository: string,
     headRepository: string
   ): Promise<Pull> {
-    const [headOwner] = headRepository.split('/')
-    const headBranch = `${headOwner}:${inputs.branch}`
-
-    // Create or update the pull request
-    const pull = await this.createOrUpdate(inputs, baseRepository, headBranch)
+    const pull = await this.createOrUpdate(
+      inputs,
+      baseRepository,
+      headRepository
+    )
 
     // Apply milestone
     if (inputs.milestone) {

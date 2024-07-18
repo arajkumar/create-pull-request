@@ -930,14 +930,17 @@ class GitHubHelper {
             repo: repo
         };
     }
-    createOrUpdate(inputs, baseRepository, headBranch) {
+    createOrUpdate(inputs, baseRepository, headRepository) {
         return __awaiter(this, void 0, void 0, function* () {
+            const [headOwner] = headRepository.split('/');
+            const headBranch = `${headOwner}:${inputs.branch}`;
+            const headBranchFull = `${headRepository}:${inputs.branch}`;
             // Try to create the pull request
             try {
                 core.info(`Received inputs for pull request: ${JSON.stringify(inputs)}`);
                 core.info(`Base repository: ${baseRepository}, Head branch: ${headBranch}`);
                 core.info(`Test Attempting creation of pull request`);
-                const { data: pull } = yield this.octokit.rest.pulls.create(Object.assign(Object.assign({}, this.parseRepository(baseRepository)), { title: inputs.title, head: headBranch, base: inputs.base, body: inputs.body, draft: inputs.draft, maintainer_can_modify: false }));
+                const { data: pull } = yield this.octokit.rest.pulls.create(Object.assign(Object.assign({}, this.parseRepository(baseRepository)), { title: inputs.title, head: headBranchFull, base: inputs.base, body: inputs.body, draft: inputs.draft, maintainer_can_modify: false }));
                 core.info(`Created pull request #${pull.number} (${headBranch} => ${inputs.base})`);
                 return {
                     number: pull.number,
@@ -981,10 +984,7 @@ class GitHubHelper {
     }
     createOrUpdatePullRequest(inputs, baseRepository, headRepository) {
         return __awaiter(this, void 0, void 0, function* () {
-            const [headOwner] = headRepository.split('/');
-            const headBranch = `${headOwner}:${inputs.branch}`;
-            // Create or update the pull request
-            const pull = yield this.createOrUpdate(inputs, baseRepository, headBranch);
+            const pull = yield this.createOrUpdate(inputs, baseRepository, headRepository);
             // Apply milestone
             if (inputs.milestone) {
                 core.info(`Applying milestone '${inputs.milestone}'`);

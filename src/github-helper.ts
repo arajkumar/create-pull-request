@@ -46,9 +46,11 @@ export class GitHubHelper {
     const headBranchFull = `${headRepository}:${inputs.branch}`
     // Try to create the pull request
     try {
-      core.info(`Received inputs for pull request: ${JSON.stringify(inputs)}`);
-      core.info(`Base repository: ${baseRepository}, Head branch: ${headBranch}`);
-      core.info(`Base repository: ${baseRepository}, Head branch full: ${headBranchFull}`);
+      core.info(`Received inputs for pull request: ${JSON.stringify(inputs)}`)
+      core.info(
+        `Base repository: ${baseRepository}, Head branch: ${headBranch}`
+      )
+      core.info(`Head branch full: ${headBranchFull}`)
       core.info(`Test Attempting creation of pull request`)
       const {data: pull} = await this.octokit.rest.pulls.create({
         ...this.parseRepository(baseRepository),

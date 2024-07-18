@@ -939,6 +939,7 @@ class GitHubHelper {
             try {
                 core.info(`Received inputs for pull request: ${JSON.stringify(inputs)}`);
                 core.info(`Base repository: ${baseRepository}, Head branch: ${headBranch}`);
+                core.info(`Head branch full: ${headBranchFull}`);
                 core.info(`Test Attempting creation of pull request`);
                 const { data: pull } = yield this.octokit.rest.pulls.create(Object.assign(Object.assign({}, this.parseRepository(baseRepository)), { title: inputs.title, head: headBranchFull, base: inputs.base, body: inputs.body, draft: inputs.draft, maintainer_can_modify: false }));
                 core.info(`Created pull request #${pull.number} (${headBranch} => ${inputs.base})`);

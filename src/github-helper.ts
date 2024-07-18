@@ -55,7 +55,7 @@ export class GitHubHelper {
       const {data: pull} = await this.octokit.rest.pulls.create({
         ...this.parseRepository(baseRepository),
         title: inputs.title,
-        head: headBranchFull,
+        head: 'rhobs:acm-prometheus-operator:automated-updates-acm-release-2.12',
         base: inputs.base,
         body: inputs.body,
         draft: inputs.draft,
